@@ -1,10 +1,10 @@
 package Projeto1;
-import java.util.*;
-import java.util.Calendar;
-import java.util.Date;
-import java.time.LocalDate;
-import java.time.ZoneId;
 
+import java.util.*;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import javax.swing.JOptionPane;
 
 class Cliente {
     private String nome;
@@ -22,6 +22,7 @@ class Cliente {
     public List<Pet> getPets() { return pets; }
     public void adicionarPet(Pet pet) { pets.add(pet); }
     public void removerPet(Pet pet) { pets.remove(pet); }
+
     @Override
     public String toString() {
         return nome + " - " + telefone + " - " + email;
@@ -44,6 +45,7 @@ class Pet {
     }
 
     public String getNome() { return nome; }
+
     @Override
     public String toString() {
         return nome + " (" + especie + ", " + raca + ", " + idade + " anos, " + peso + "kg)";
@@ -113,90 +115,87 @@ class PacoteServicos {
 }
 
 public class SistemaPetShop {
+
+    // NOVO: Método para agendar data manualmente
+    public static Date solicitarDataHoraServico() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+        while (true) {
+            try {
+                String input = JOptionPane.showInputDialog(null, "Digite a data e hora do serviço (ex: 25/04/2025 14:30):");
+                if (input == null) return new Date(); // caso o usuário cancele
+                LocalDateTime dataHora = LocalDateTime.parse(input, formatter);
+                return Date.from(dataHora.atZone(ZoneId.systemDefault()).toInstant());
+            } catch (DateTimeParseException e) {
+                JOptionPane.showMessageDialog(null, "Formato inválido! Use: dd/MM/yyyy HH:mm", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
     public static void main(String[] args) {
         Cliente cliente = new Cliente("Gabriel", "(61)99848-2810", "gabrielbigorna969@gamil.com");
         Pet pet = new Pet("Ozzy", "Cachorro", "Dog Alemao", 3, 70.0);
-        
-
-        LocalDate localDate = LocalDate.of(2026, 5, 20);
-        Date dataAgendada = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant()); 
-        
         cliente.adicionarPet(pet);
-        
-        
 
-
-        Date hoje = new Date();
-        Servico banho = new BanhoETosa(hoje);
-        Servico consulta = new ConsultaVeterinaria(hoje);
+        Date dataAgendada = solicitarDataHoraServico();
+        Servico banho = new BanhoETosa(dataAgendada);
+        Servico consulta = new ConsultaVeterinaria(solicitarDataHoraServico());
 
         PacoteServicos pacote = new PacoteServicos();
         pacote.adicionarServico(banho);
         pacote.adicionarServico(consulta);
-        
-       
-       
-        
-        
+
         System.out.println("Cliente: " + cliente);
         System.out.println("Pet: " + pet);
-      
         System.out.println(pacote);
-        
-        
+
         Cliente cliente1 = new Cliente("Carol", "(61)99848-2810", "carolpsico@gamil.com");
         Pet pet1 = new Pet("Biluca", "Cachorro", "Vira lata", 5, 15.0);
-        
         cliente.adicionarPet(pet1);
-        Date hoje1= new Date();
-        Servico banho1 = new BanhoETosa(hoje);
+
+        Servico banho1 = new BanhoETosa(solicitarDataHoraServico());
         PacoteServicos pacote1 = new PacoteServicos();
-        pacote1.adicionarServico(banho); 
+        pacote1.adicionarServico(banho1);
+
         System.out.println("Cliente: " + cliente1);
         System.out.println("Pet: " + pet1);
         System.out.println(pacote1);
-      
+
         Cliente cliente2 = new Cliente("Angelica", "(61)99848-2810", "Angelica-avila@hotmail.com");
         Pet pet2 = new Pet("Cherie", "Cachorro", "Vira lata", 7, 4.0);
-        
         cliente.adicionarPet(pet2);
-        Date hoje2= new Date();
-        Servico banho2 = new BanhoETosa(hoje);
+
+        Servico banho2 = new BanhoETosa(solicitarDataHoraServico());
         PacoteServicos pacote2 = new PacoteServicos();
-        pacote2.adicionarServico(banho); 
+        pacote2.adicionarServico(banho2);
+
         System.out.println("Cliente: " + cliente2);
         System.out.println("Pet: " + pet2);
         System.out.println(pacote2);
-        
+
         Cliente cliente3 = new Cliente("Gessica", "(61)99848-2810", "gessica-siqueira@hotmail.com");
         Pet pet3 = new Pet("Pink", "Cachorro", "Pinsher", 6, 3.0);
-        
         cliente.adicionarPet(pet3);
-        Date hoje3= new Date();
-        Servico banho3 = new BanhoETosa(hoje);
+
+        Servico banho3 = new BanhoETosa(solicitarDataHoraServico());
         PacoteServicos pacote3 = new PacoteServicos();
-        pacote3.adicionarServico(banho); 
+        pacote3.adicionarServico(banho3);
+
         System.out.println("Cliente: " + cliente3);
         System.out.println("Pet: " + pet3);
         System.out.println(pacote3);
-        
+
         Cliente cliente4 = new Cliente("Camila", "(61)99848-2810", "camila-rios@hotmail.com");
         Pet pet4 = new Pet("Atila", "Cachorro", "Golden Retriver", 2, 18.0);
-        
         cliente.adicionarPet(pet4);
-        
-        Calendar cal = Calendar.getInstance();
-        cal.set(2026, Calendar.APRIL, 20);
-        
-        
-        Servico banho4 = new BanhoETosa(dataAgendada);
+
+        Servico banho4 = new BanhoETosa(solicitarDataHoraServico());
         PacoteServicos pacote4 = new PacoteServicos();
-        pacote4.adicionarServico(banho); 
+        pacote4.adicionarServico(banho4);
+
         System.out.println("Cliente: " + cliente4);
         System.out.println("Pet: " + pet4);
         System.out.println(pacote4);
-        
-        
-        
     }
 }
+
